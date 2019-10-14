@@ -487,6 +487,7 @@ def original_ig(ress,test,labels):   # ress is training data
 
 
 if __name__ == "__main__":
+   '''
    df=pd.read_csv('sonar.csv',header=None)    # Name of the input numeric feature file in .csv format
    shuffle(df)
    data=df.sample(frac=1)
@@ -559,12 +560,12 @@ if __name__ == "__main__":
    stable_ig={'kNN':0,'Logistic Regression':0,'Linear SVM':0,'Poly SVM':0,'Random Forest':0,\
                   'AdaBoost':0,'Neural Network':0,'Decision Tree':0}
 
-
+   '''
    #############################################################################
                 # Computing Accuracy for each fold of Cross Validation
    #############################################################################
 
-   original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
+   # original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
    original_ig_train1=pd.read_csv('sonar_original_ig_trainfeatures.csv', header=None)
    original_ig_test1=pd.read_csv('sonar_original_ig_testfeatures.csv',header=None)
 
@@ -572,9 +573,12 @@ if __name__ == "__main__":
    original_ig_test1=original_ig_test1.as_matrix()
 
    dependent(original_ig_train1, 0.7, 1)
+
+   
    linear(original_ig_train1, original_ig_test1, 1)
    nonlinear(original_ig_train1, original_ig_test1, 1)
-
+   
+   '''
    a1=pd.read_csv('sonar_related_lineartest_1.csv',header=None)          # all predicted feature files
    a2=pd.read_csv('sonar_related_lineartrain_1.csv',header=None)
    a3=pd.read_csv('sonar_related_nonlineartest_1.csv',header=None)
@@ -1173,6 +1177,7 @@ if __name__ == "__main__":
    #rank(Train1,y_train)
    #rank(Train,y_train)
    '''
+   '''
    print("Original features", pp)
    print("Selected after IG (Avg)", len_orig_ig/5)
    print("---------------------------------------------")
@@ -1181,7 +1186,7 @@ if __name__ == "__main__":
    print("---------------------------------------------")
    print("Features selected after ensemble (Avg)", ensemble_val/5)
    '''
-   
+   '''
    print("Accuracies :")
 
    print("................... Average of results after 5 fold CV in the same order as above .............................")
@@ -1197,5 +1202,5 @@ if __name__ == "__main__":
        print((supplement_ig[names[i]]/5)*100)
        print((stable_ig[names[i]]/5)*100)
        print("--------------------------")
-
-   print("DONE !!!")
+   '''
+   print("dependent and regression DONE !!!")

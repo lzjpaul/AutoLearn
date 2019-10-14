@@ -498,16 +498,18 @@ if __name__ == "__main__":
 
    X=x.as_matrix()
    y=Y.as_matrix()
+   '''
    print("Features in Original Dataset:")
    p,pp=X.shape
    print(pp)
 
    len_orig_ig=0
+   '''
    nc_val=0
    stable_val=0
    ensemble_val=0
    # Dividing data into 5 parts where 4 parts are used for training and 1 for testing in each iteration
-
+   '''
    train1=X[:(int)(0.8*n),:]
    test1=X[(int)(0.8*n):,:]
 
@@ -522,8 +524,9 @@ if __name__ == "__main__":
 
    train5=np.concatenate((X[:(int)(0.2*n),:],X[(int)(0.4*n):,:]),axis=0)
    test5=X[(int)(0.2*n):(int)(0.4*n),:]
-
+   '''
    train1Y=y[:(int)(0.8*n)]
+   '''
    test1Y=y[(int)(0.8*n):]
 
    train2Y=y[(int)(0.2*n):]
@@ -559,11 +562,11 @@ if __name__ == "__main__":
    stable_ig={'kNN':0,'Logistic Regression':0,'Linear SVM':0,'Poly SVM':0,'Random Forest':0,\
                   'AdaBoost':0,'Neural Network':0,'Decision Tree':0}
 
-
+   '''
    #############################################################################
                 # Computing Accuracy for each fold of Cross Validation
    #############################################################################
-
+   '''
    original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
    original_ig_train1=pd.read_csv('sonar_original_ig_trainfeatures.csv', header=None)
    original_ig_test1=pd.read_csv('sonar_original_ig_testfeatures.csv',header=None)
@@ -574,7 +577,7 @@ if __name__ == "__main__":
    dependent(original_ig_train1, 0.7, 1)
    linear(original_ig_train1, original_ig_test1, 1)
    nonlinear(original_ig_train1, original_ig_test1, 1)
-
+   '''
    a1=pd.read_csv('sonar_related_lineartest_1.csv',header=None)          # all predicted feature files
    a2=pd.read_csv('sonar_related_lineartrain_1.csv',header=None)
    a3=pd.read_csv('sonar_related_nonlineartest_1.csv',header=None)
@@ -590,6 +593,7 @@ if __name__ == "__main__":
    p1=scaler.transform(r3)     # Normalized Test
 
    stable(p2,p1,train1Y)
+   '''
    f1=pd.read_csv('sonar_ensemble_trainfeatures.csv',header=None)
    f2=pd.read_csv('sonar_ensemble_testfeatures.csv',header=None)
 
@@ -1173,6 +1177,7 @@ if __name__ == "__main__":
    #rank(Train1,y_train)
    #rank(Train,y_train)
    '''
+   '''
    print("Original features", pp)
    print("Selected after IG (Avg)", len_orig_ig/5)
    print("---------------------------------------------")
@@ -1181,7 +1186,7 @@ if __name__ == "__main__":
    print("---------------------------------------------")
    print("Features selected after ensemble (Avg)", ensemble_val/5)
    '''
-   
+   '''
    print("Accuracies :")
 
    print("................... Average of results after 5 fold CV in the same order as above .............................")
@@ -1197,5 +1202,5 @@ if __name__ == "__main__":
        print((supplement_ig[names[i]]/5)*100)
        print((stable_ig[names[i]]/5)*100)
        print("--------------------------")
-
-   print("DONE !!!")
+   '''
+   print("stable DONE !!!")

@@ -565,6 +565,7 @@ if __name__ == "__main__":
    #############################################################################
 
    original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
+   '''
    original_ig_train1=pd.read_csv('sonar_original_ig_trainfeatures.csv', header=None)
    original_ig_test1=pd.read_csv('sonar_original_ig_testfeatures.csv',header=None)
 
@@ -1173,6 +1174,7 @@ if __name__ == "__main__":
    #rank(Train1,y_train)
    #rank(Train,y_train)
    '''
+   '''
    print("Original features", pp)
    print("Selected after IG (Avg)", len_orig_ig/5)
    print("---------------------------------------------")
@@ -1181,7 +1183,7 @@ if __name__ == "__main__":
    print("---------------------------------------------")
    print("Features selected after ensemble (Avg)", ensemble_val/5)
    '''
-   
+   '''
    print("Accuracies :")
 
    print("................... Average of results after 5 fold CV in the same order as above .............................")
@@ -1197,5 +1199,5 @@ if __name__ == "__main__":
        print((supplement_ig[names[i]]/5)*100)
        print((stable_ig[names[i]]/5)*100)
        print("--------------------------")
-
-   print("DONE !!!")
+   '''
+   print("original_ig DONE !!!")

@@ -495,9 +495,11 @@ if __name__ == "__main__":
 
    x=data.drop(data.columns[len(data.columns)-1],1)
    Y=data[data.columns[len(data.columns)-1]]
-
+   '''
    X=x.as_matrix()
+   '''
    y=Y.as_matrix()
+   '''
    print("Features in Original Dataset:")
    p,pp=X.shape
    print(pp)
@@ -522,10 +524,10 @@ if __name__ == "__main__":
 
    train5=np.concatenate((X[:(int)(0.2*n),:],X[(int)(0.4*n):,:]),axis=0)
    test5=X[(int)(0.2*n):(int)(0.4*n),:]
-
+   '''
    train1Y=y[:(int)(0.8*n)]
    test1Y=y[(int)(0.8*n):]
-
+   '''
    train2Y=y[(int)(0.2*n):]
    test2Y=y[:(int)(0.2*n)]
 
@@ -543,7 +545,7 @@ if __name__ == "__main__":
    list2=y[(int)(0.4*n):]
    train5Y=np.append(list1,list2)
    test5Y=y[(int)(0.2*n):(int)(0.4*n)]
-
+   '''
    original={'kNN':0,'Logistic Regression':0,'Linear SVM':0,'Poly SVM':0,'Random Forest':0,\
    			 'AdaBoost':0,'Neural Network':0,'Decision Tree':0}
    orig_ig={'kNN':0,'Logistic Regression':0,'Linear SVM':0,'Poly SVM':0,'Random Forest':0,\
@@ -563,7 +565,7 @@ if __name__ == "__main__":
    #############################################################################
                 # Computing Accuracy for each fold of Cross Validation
    #############################################################################
-
+   '''
    original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
    original_ig_train1=pd.read_csv('sonar_original_ig_trainfeatures.csv', header=None)
    original_ig_test1=pd.read_csv('sonar_original_ig_testfeatures.csv',header=None)
@@ -590,13 +592,14 @@ if __name__ == "__main__":
    p1=scaler.transform(r3)     # Normalized Test
 
    stable(p2,p1,train1Y)
+   '''
    f1=pd.read_csv('sonar_ensemble_trainfeatures.csv',header=None)
    f2=pd.read_csv('sonar_ensemble_testfeatures.csv',header=None)
 
    scaler=StandardScaler().fit(f1)
    e_f1=scaler.transform(f1)
    e_f2=scaler.transform(f2)
-
+   '''
    x1X=np.hstack([test1, f2])  # original test features, selected by IG, f2 is feature space after ensemble selection.
    x2X=np.hstack([train1, f1])
 
@@ -620,7 +623,7 @@ if __name__ == "__main__":
    scaler=StandardScaler().fit(st_x2X)  # Again normalization of the complete combined feature pool
    st_x2=scaler.transform(st_x2X)          # note - when features need to be merged with R2R, we need to do normalization.
    st_x1=scaler.transform(st_x1X)
-
+   '''
    print("............................................................................................................................")
 
    print("Predicting Accuracies")
@@ -632,7 +635,7 @@ if __name__ == "__main__":
    names=['kNN','Logistic Regression','Linear SVM','Poly SVM','Random Forest','AdaBoost','Neural Network','Decision Tree']
    models=[KNeighborsClassifier(), LogisticRegression(), svm.LinearSVC(),SVC(C=1.0, kernel='poly'),
            RandomForestClassifier(),AdaBoostClassifier(), MLPClassifier(), tree.DecisionTreeClassifier()]
-
+   '''
    print("....................Results on Original Features...............................")
 
    for i in range(0,len(models)):
@@ -656,15 +659,15 @@ if __name__ == "__main__":
       y_out= models[i].predict(p1)
       print(models[i].score(p1,test1Y)," ..... ",names[i])
       new[names[i]]+=models[i].score(p1,test1Y)
-
+   '''
    print("...................Results after R2R.........................")
-
+   
    for i in range(0,len(models)):
       models[i].fit(e_f1,train1Y)
       y_out= models[i].predict(e_f2)
       print(models[i].score(e_f2,test1Y)," ..... ",names[i])
       new_fs[names[i]]+=models[i].score(e_f2,test1Y)
-
+   '''
    print("...................Results on (5).............................")
 
    for i in range(0,len(models)):
@@ -690,13 +693,13 @@ if __name__ == "__main__":
       stable_ig[names[i]]+=models[i].score(st_x1,test1Y)
 
    rank(x2,train1Y) # - rank function is for plotting graph - sec 5 in paper
-   
+   ''' 
    done = time.time()
    do = datetime.datetime.fromtimestamp(done).strftime('%Y-%m-%d %H:%M:%S')
    print (do)
    elapsed = done - start
    print (elapsed)
-
+   '''
    print("################################################################################")
    print("################################################################################")
 
@@ -1173,6 +1176,7 @@ if __name__ == "__main__":
    #rank(Train1,y_train)
    #rank(Train,y_train)
    '''
+   '''
    print("Original features", pp)
    print("Selected after IG (Avg)", len_orig_ig/5)
    print("---------------------------------------------")
@@ -1181,7 +1185,7 @@ if __name__ == "__main__":
    print("---------------------------------------------")
    print("Features selected after ensemble (Avg)", ensemble_val/5)
    '''
-   
+   '''
    print("Accuracies :")
 
    print("................... Average of results after 5 fold CV in the same order as above .............................")
@@ -1197,5 +1201,5 @@ if __name__ == "__main__":
        print((supplement_ig[names[i]]/5)*100)
        print((stable_ig[names[i]]/5)*100)
        print("--------------------------")
-
-   print("DONE !!!")
+   '''
+   print("model DONE !!!")
