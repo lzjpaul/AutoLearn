@@ -34,6 +34,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.feature_selection import mutual_info_classif
 import datetime
 import time
+import argparse
 
 __author__ = "Saket Maheshwary, Ambika Kaul"
 __credits__ = ["Saket Maheshwary", "Ambika Kaul"]
@@ -58,6 +59,7 @@ np.random.seed(7)  # to ensure that everytime results are same
 
 def shuffle(df, n=1, axis=0):
     df = df.copy()
+    np.random.seed(10)
     for _ in range(n):
       df.apply(np.random.shuffle, axis=axis)
     return df
@@ -332,7 +334,7 @@ def nonlinear(TR,TST,fold):
 #############################################################################
 
 
-def stable(ress,test,labels):   # ress is training data
+def stable(output_folder, ress,test,labels):   # ress is training data
     start = time.time()
     st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
     print (st)
@@ -372,14 +374,14 @@ def stable(ress,test,labels):   # ress is training data
     dataset3=test[:,finale]
     #dataset3=test.iloc[:,finale]
 
-    if os.path.exists("sonar_stable_testfeatures.csv"):                           # Name of Ouput file generated
-       os.remove("sonar_stable_testfeatures.csv")
-    if os.path.exists("sonar_stable_trainfeatures.csv"):                          # Name of Ouput file generated
-       os.remove("sonar_stable_trainfeatures.csv")
+    if os.path.exists(output_folder+"sonar_stable_testfeatures.csv"):                           # Name of Ouput file generated
+       os.remove(output_folder+"sonar_stable_testfeatures.csv")
+    if os.path.exists(output_folder+"sonar_stable_trainfeatures.csv"):                          # Name of Ouput file generated
+       os.remove(output_folder+"sonar_stable_trainfeatures.csv")
 
-    with open("sonar_stable_testfeatures.csv", "wb") as myfile:
+    with open(output_folder+"sonar_stable_testfeatures.csv", "wb") as myfile:
             np.savetxt(myfile,dataset3,delimiter=",",fmt="%s")
-    with open("sonar_stable_trainfeatures.csv", "wb") as myfile:
+    with open(output_folder+"sonar_stable_trainfeatures.csv", "wb") as myfile:
             np.savetxt(myfile,dataset1,delimiter=",",fmt="%s")
 
     
@@ -422,14 +424,14 @@ def stable(ress,test,labels):   # ress is training data
     dataset2=ress[:,ensemble_finale]
     dataset4=test[:,ensemble_finale]
 
-    if os.path.exists("sonar_ensemble_testfeatures.csv"):                           # Name of Ouput file generated
-       os.remove("sonar_ensemble_testfeatures.csv")
-    if os.path.exists("sonar_ensemble_trainfeatures.csv"):                          # Name of Ouput file generated
-       os.remove("sonar_ensemble_trainfeatures.csv")
+    if os.path.exists(output_folder+"sonar_ensemble_testfeatures.csv"):                           # Name of Ouput file generated
+       os.remove(output_folder+"sonar_ensemble_testfeatures.csv")
+    if os.path.exists(output_folder+"sonar_ensemble_trainfeatures.csv"):                          # Name of Ouput file generated
+       os.remove(output_folder+"sonar_ensemble_trainfeatures.csv")
 
-    with open("sonar_ensemble_testfeatures.csv", "wb") as myfile:
+    with open(output_folder+"sonar_ensemble_testfeatures.csv", "wb") as myfile:
             np.savetxt(myfile,dataset4,delimiter=",",fmt="%s")
-    with open("sonar_ensemble_trainfeatures.csv", "wb") as myfile:
+    with open(output_folder+"sonar_ensemble_trainfeatures.csv", "wb") as myfile:
             np.savetxt(myfile,dataset2,delimiter=",",fmt="%s")
 
     done = time.time()
@@ -486,8 +488,14 @@ def original_ig(ress,test,labels):   # ress is training data
 ###############################################################################################################################################
 
 
-if __name__ == "__main__":
-   df=pd.read_csv('sonar.csv',header=None)    # Name of the input numeric feature file in .csv format
+if __name__ == '__main__':
+   parser = argparse.ArgumentParser(description='Autolearn IG')
+   parser.add_argument('-inputfolder', type=str, help='input data directory')
+   parser.add_argument('-outputfolder', type=str, help='output data directory')
+   args = parser.parse_args()
+
+   '''
+   df=pd.read_csv('autolearn_data/sonar.csv',header=None)    # Name of the input numeric feature file in .csv format
    shuffle(df)
    data=df.sample(frac=1)
    n,m=data.shape
@@ -498,16 +506,19 @@ if __name__ == "__main__":
 
    X=x.as_matrix()
    y=Y.as_matrix()
+   '''
+   '''
    print("Features in Original Dataset:")
    p,pp=X.shape
    print(pp)
 
    len_orig_ig=0
+   '''
    nc_val=0
    stable_val=0
    ensemble_val=0
    # Dividing data into 5 parts where 4 parts are used for training and 1 for testing in each iteration
-
+   '''
    train1=X[:(int)(0.8*n),:]
    test1=X[(int)(0.8*n):,:]
 
@@ -522,8 +533,11 @@ if __name__ == "__main__":
 
    train5=np.concatenate((X[:(int)(0.2*n),:],X[(int)(0.4*n):,:]),axis=0)
    test5=X[(int)(0.2*n):(int)(0.4*n),:]
-
-   train1Y=y[:(int)(0.8*n)]
+   '''
+   # train1Y=y[:(int)(0.8*n)]
+   train1Y=np.genfromtxt('train1Y_matrix.csv', delimiter=',', dtype='int')
+   print ("train1Y shape: ", train1Y.shape)
+   '''
    test1Y=y[(int)(0.8*n):]
 
    train2Y=y[(int)(0.2*n):]
@@ -559,23 +573,12 @@ if __name__ == "__main__":
    stable_ig={'kNN':0,'Logistic Regression':0,'Linear SVM':0,'Poly SVM':0,'Random Forest':0,\
                   'AdaBoost':0,'Neural Network':0,'Decision Tree':0}
 
-
+   '''
    #############################################################################
                 # Computing Accuracy for each fold of Cross Validation
    #############################################################################
-
-   start = time.time()
-   st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
-   print (st)
-   
+   '''
    original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
-   
-   done = time.time()
-   do = datetime.datetime.fromtimestamp(done).strftime('%Y-%m-%d %H:%M:%S')
-   print (do)
-   elapsed = done - start
-   print (elapsed)
-   
    original_ig_train1=pd.read_csv('sonar_original_ig_trainfeatures.csv', header=None)
    original_ig_test1=pd.read_csv('sonar_original_ig_testfeatures.csv',header=None)
 
@@ -585,11 +588,11 @@ if __name__ == "__main__":
    dependent(original_ig_train1, 0.7, 1)
    linear(original_ig_train1, original_ig_test1, 1)
    nonlinear(original_ig_train1, original_ig_test1, 1)
-
-   a1=pd.read_csv('sonar_related_lineartest_1.csv',header=None)          # all predicted feature files
-   a2=pd.read_csv('sonar_related_lineartrain_1.csv',header=None)
-   a3=pd.read_csv('sonar_related_nonlineartest_1.csv',header=None)
-   a4=pd.read_csv('sonar_related_nonlineartrain_1.csv',header=None)
+   '''
+   a1=pd.read_csv(args.inputfolder+'sonar_related_lineartest_1.csv',header=None)          # all predicted feature files
+   a2=pd.read_csv(args.inputfolder+'sonar_related_lineartrain_1.csv',header=None)
+   a3=pd.read_csv(args.inputfolder+'sonar_related_nonlineartest_1.csv',header=None)
+   a4=pd.read_csv(args.inputfolder+'sonar_related_nonlineartrain_1.csv',header=None)
 
    #r4=a4
    #r3=a3
@@ -600,7 +603,8 @@ if __name__ == "__main__":
    p2=scaler.transform(r4)     # Normalized Train
    p1=scaler.transform(r3)     # Normalized Test
 
-   stable(p2,p1,train1Y)
+   stable(args.outputfolder, p2,p1,train1Y)
+   '''
    f1=pd.read_csv('sonar_ensemble_trainfeatures.csv',header=None)
    f2=pd.read_csv('sonar_ensemble_testfeatures.csv',header=None)
 
@@ -1184,6 +1188,7 @@ if __name__ == "__main__":
    #rank(Train1,y_train)
    #rank(Train,y_train)
    '''
+   '''
    print("Original features", pp)
    print("Selected after IG (Avg)", len_orig_ig/5)
    print("---------------------------------------------")
@@ -1192,7 +1197,7 @@ if __name__ == "__main__":
    print("---------------------------------------------")
    print("Features selected after ensemble (Avg)", ensemble_val/5)
    '''
-   
+   '''
    print("Accuracies :")
 
    print("................... Average of results after 5 fold CV in the same order as above .............................")
@@ -1208,5 +1213,5 @@ if __name__ == "__main__":
        print((supplement_ig[names[i]]/5)*100)
        print((stable_ig[names[i]]/5)*100)
        print("--------------------------")
-
-   print("DONE !!!")
+   '''
+   print("stable DONE !!!")

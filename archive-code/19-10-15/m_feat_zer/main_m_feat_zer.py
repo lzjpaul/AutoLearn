@@ -487,7 +487,7 @@ def original_ig(ress,test,labels):   # ress is training data
 
 
 if __name__ == "__main__":
-   df=pd.read_csv('sonar.csv',header=None)    # Name of the input numeric feature file in .csv format
+   df=pd.read_csv('m_feat_zer.csv',header=None)    # Name of the input numeric feature file in .csv format
    shuffle(df)
    data=df.sample(frac=1)
    n,m=data.shape

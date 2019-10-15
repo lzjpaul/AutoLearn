@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# no non-lear features ..
 import os
 import sys
 import warnings
@@ -487,7 +487,7 @@ def original_ig(ress,test,labels):   # ress is training data
 
 
 if __name__ == "__main__":
-   df=pd.read_csv('sonar.csv',header=None)    # Name of the input numeric feature file in .csv format
+   df=pd.read_csv('m_feat_fou.csv',header=None)    # Name of the input numeric feature file in .csv format
    shuffle(df)
    data=df.sample(frac=1)
    n,m=data.shape
@@ -564,18 +564,7 @@ if __name__ == "__main__":
                 # Computing Accuracy for each fold of Cross Validation
    #############################################################################
 
-   start = time.time()
-   st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
-   print (st)
-   
    original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
-   
-   done = time.time()
-   do = datetime.datetime.fromtimestamp(done).strftime('%Y-%m-%d %H:%M:%S')
-   print (do)
-   elapsed = done - start
-   print (elapsed)
-   
    original_ig_train1=pd.read_csv('sonar_original_ig_trainfeatures.csv', header=None)
    original_ig_test1=pd.read_csv('sonar_original_ig_testfeatures.csv',header=None)
 

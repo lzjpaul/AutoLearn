@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# no non-lear features ..
 import os
 import sys
 import warnings
@@ -487,7 +487,7 @@ def original_ig(ress,test,labels):   # ress is training data
 
 
 if __name__ == "__main__":
-   df=pd.read_csv('sonar.csv',header=None)    # Name of the input numeric feature file in .csv format
+   df=pd.read_csv('m_feat_fou.csv',header=None)    # Name of the input numeric feature file in .csv format
    shuffle(df)
    data=df.sample(frac=1)
    n,m=data.shape
@@ -566,35 +566,36 @@ if __name__ == "__main__":
 
    start = time.time()
    st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
-   print (st)
-   
+   print (st)   
+
    original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
-   
+   original_ig_train1=pd.read_csv('sonar_original_ig_trainfeatures.csv', header=None)
+   original_ig_test1=pd.read_csv('sonar_original_ig_testfeatures.csv',header=None)
+
    done = time.time()
    do = datetime.datetime.fromtimestamp(done).strftime('%Y-%m-%d %H:%M:%S')
    print (do)
    elapsed = done - start
-   print (elapsed)
-   
-   original_ig_train1=pd.read_csv('sonar_original_ig_trainfeatures.csv', header=None)
-   original_ig_test1=pd.read_csv('sonar_original_ig_testfeatures.csv',header=None)
+   print (elapsed)   
 
    original_ig_train1=original_ig_train1.as_matrix()
    original_ig_test1=original_ig_test1.as_matrix()
 
-   dependent(original_ig_train1, 0.7, 1)
-   linear(original_ig_train1, original_ig_test1, 1)
+   # dependent(original_ig_train1, 0.7, 1)
+   # linear(original_ig_train1, original_ig_test1, 1)
    nonlinear(original_ig_train1, original_ig_test1, 1)
 
-   a1=pd.read_csv('sonar_related_lineartest_1.csv',header=None)          # all predicted feature files
-   a2=pd.read_csv('sonar_related_lineartrain_1.csv',header=None)
+   ## no linear
+   # a1=pd.read_csv('sonar_related_lineartest_1.csv',header=None)          # all predicted feature files
+   # a2=pd.read_csv('sonar_related_lineartrain_1.csv',header=None)
    a3=pd.read_csv('sonar_related_nonlineartest_1.csv',header=None)
    a4=pd.read_csv('sonar_related_nonlineartrain_1.csv',header=None)
 
    #r4=a4
    #r3=a3
-   r4=np.hstack([a2,a4])      # Train
-   r3=np.hstack([a1,a3])      # Test
+   ## no linear
+   r4=a4      # Train
+   r3=a3      # Test
 
    scaler=StandardScaler().fit(r4) # Normalization  & fit only on training
    p2=scaler.transform(r4)     # Normalized Train

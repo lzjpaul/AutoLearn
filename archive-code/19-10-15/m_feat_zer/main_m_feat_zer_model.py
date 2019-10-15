@@ -487,7 +487,7 @@ def original_ig(ress,test,labels):   # ress is training data
 
 
 if __name__ == "__main__":
-   df=pd.read_csv('sonar.csv',header=None)    # Name of the input numeric feature file in .csv format
+   df=pd.read_csv('m_feat_zer.csv',header=None)    # Name of the input numeric feature file in .csv format
    shuffle(df)
    data=df.sample(frac=1)
    n,m=data.shape
@@ -563,11 +563,11 @@ if __name__ == "__main__":
    #############################################################################
                 # Computing Accuracy for each fold of Cross Validation
    #############################################################################
-
+   '''
    start = time.time()
    st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
    print (st)
-   
+    
    original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
    
    done = time.time()
@@ -585,7 +585,7 @@ if __name__ == "__main__":
    dependent(original_ig_train1, 0.7, 1)
    linear(original_ig_train1, original_ig_test1, 1)
    nonlinear(original_ig_train1, original_ig_test1, 1)
-
+   '''
    a1=pd.read_csv('sonar_related_lineartest_1.csv',header=None)          # all predicted feature files
    a2=pd.read_csv('sonar_related_lineartrain_1.csv',header=None)
    a3=pd.read_csv('sonar_related_nonlineartest_1.csv',header=None)
@@ -599,8 +599,11 @@ if __name__ == "__main__":
    scaler=StandardScaler().fit(r4) # Normalization  & fit only on training
    p2=scaler.transform(r4)     # Normalized Train
    p1=scaler.transform(r3)     # Normalized Test
-
+   print ("p1 shape: ", p1.shape)
+   print ("p2 shape: ", p2.shape)
+   '''
    stable(p2,p1,train1Y)
+   
    f1=pd.read_csv('sonar_ensemble_trainfeatures.csv',header=None)
    f2=pd.read_csv('sonar_ensemble_testfeatures.csv',header=None)
 
@@ -631,19 +634,23 @@ if __name__ == "__main__":
    scaler=StandardScaler().fit(st_x2X)  # Again normalization of the complete combined feature pool
    st_x2=scaler.transform(st_x2X)          # note - when features need to be merged with R2R, we need to do normalization.
    st_x1=scaler.transform(st_x1X)
-
+   '''
    print("............................................................................................................................")
 
    print("Predicting Accuracies")
    
-   start = time.time()
-   st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
-   print (st)
+   # start = time.time()
+   # st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
+   # print (st)
 
-   names=['kNN','Logistic Regression','Linear SVM','Poly SVM','Random Forest','AdaBoost','Neural Network','Decision Tree']
-   models=[KNeighborsClassifier(), LogisticRegression(), svm.LinearSVC(),SVC(C=1.0, kernel='poly'),
-           RandomForestClassifier(),AdaBoostClassifier(), MLPClassifier(), tree.DecisionTreeClassifier()]
-
+   # names=['kNN','Logistic Regression','Linear SVM','Poly SVM','Random Forest','AdaBoost','Neural Network','Decision Tree']
+   # models=[KNeighborsClassifier(), LogisticRegression(), svm.LinearSVC(),SVC(C=1.0, kernel='poly'),
+   #         RandomForestClassifier(),AdaBoostClassifier(), MLPClassifier(), tree.DecisionTreeClassifier()]
+   # names=['Linear SVM','AdaBoost']
+   # models=[svm.LinearSVC(tol=0.00000001,max_iter=3000),AdaBoostClassifier(n_estimators=150)]
+   names=['AdaBoost']
+   models=[AdaBoostClassifier(n_estimators=300)]
+   '''
    print("....................Results on Original Features...............................")
 
    for i in range(0,len(models)):
@@ -659,15 +666,23 @@ if __name__ == "__main__":
       y_out= models[i].predict(original_ig_test1)
       print(models[i].score(original_ig_test1,test1Y)," ..... ",names[i])
       orig_ig[names[i]]+=models[i].score(original_ig_test1, test1Y)
-
+   '''
    print("...................Results on Newly constructed Features.........................")
 
    for i in range(0,len(models)):
+      start = time.time()
+      st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
+      print (st)
       models[i].fit(p2,train1Y)
       y_out= models[i].predict(p1)
       print(models[i].score(p1,test1Y)," ..... ",names[i])
       new[names[i]]+=models[i].score(p1,test1Y)
-
+      done = time.time()
+      do = datetime.datetime.fromtimestamp(done).strftime('%Y-%m-%d %H:%M:%S')
+      print (do)
+      elapsed = done - start
+      print (elapsed)   
+   '''
    print("...................Results after R2R.........................")
 
    for i in range(0,len(models)):
@@ -707,7 +722,7 @@ if __name__ == "__main__":
    print (do)
    elapsed = done - start
    print (elapsed)
-
+   
    print("################################################################################")
    print("################################################################################")
 
@@ -1184,6 +1199,7 @@ if __name__ == "__main__":
    #rank(Train1,y_train)
    #rank(Train,y_train)
    '''
+   '''
    print("Original features", pp)
    print("Selected after IG (Avg)", len_orig_ig/5)
    print("---------------------------------------------")
@@ -1192,7 +1208,7 @@ if __name__ == "__main__":
    print("---------------------------------------------")
    print("Features selected after ensemble (Avg)", ensemble_val/5)
    '''
-   
+   '''
    print("Accuracies :")
 
    print("................... Average of results after 5 fold CV in the same order as above .............................")
@@ -1208,5 +1224,5 @@ if __name__ == "__main__":
        print((supplement_ig[names[i]]/5)*100)
        print((stable_ig[names[i]]/5)*100)
        print("--------------------------")
-
-   print("DONE !!!")
+   '''
+   print("model DONE !!!")

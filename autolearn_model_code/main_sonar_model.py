@@ -34,6 +34,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.feature_selection import mutual_info_classif
 import datetime
 import time
+import argparse
 
 __author__ = "Saket Maheshwary, Ambika Kaul"
 __credits__ = ["Saket Maheshwary", "Ambika Kaul"]
@@ -58,6 +59,7 @@ np.random.seed(7)  # to ensure that everytime results are same
 
 def shuffle(df, n=1, axis=0):
     df = df.copy()
+    np.random.seed(10)
     for _ in range(n):
       df.apply(np.random.shuffle, axis=axis)
     return df
@@ -485,9 +487,14 @@ def original_ig(ress,test,labels):   # ress is training data
                                                            # Main Function
 ###############################################################################################################################################
 
+if __name__ == '__main__':
+   parser = argparse.ArgumentParser(description='Autolearn model')
+   parser.add_argument('-inputfolder', type=str, help='input data directory')
+   parser.add_argument('-outputfolder', type=str, help='output data directory')
+   args = parser.parse_args()
 
-if __name__ == "__main__":
-   df=pd.read_csv('sonar.csv',header=None)    # Name of the input numeric feature file in .csv format
+   '''
+   df=pd.read_csv('autolearn_data/sonar.csv',header=None)    # Name of the input numeric feature file in .csv format
    shuffle(df)
    data=df.sample(frac=1)
    n,m=data.shape
@@ -495,7 +502,6 @@ if __name__ == "__main__":
 
    x=data.drop(data.columns[len(data.columns)-1],1)
    Y=data[data.columns[len(data.columns)-1]]
-
    X=x.as_matrix()
    y=Y.as_matrix()
    print("Features in Original Dataset:")
@@ -522,10 +528,12 @@ if __name__ == "__main__":
 
    train5=np.concatenate((X[:(int)(0.2*n),:],X[(int)(0.4*n):,:]),axis=0)
    test5=X[(int)(0.2*n):(int)(0.4*n),:]
-
-   train1Y=y[:(int)(0.8*n)]
-   test1Y=y[(int)(0.8*n):]
-
+   '''
+   # train1Y=y[:(int)(0.8*n)]
+   # test1Y=y[(int)(0.8*n):]
+   train1Y=np.genfromtxt('train1Y_matrix.csv', delimiter=',', dtype='int')
+   test1Y=np.genfromtxt('test1Y_matrix.csv', delimiter=',', dtype='int')
+   '''
    train2Y=y[(int)(0.2*n):]
    test2Y=y[:(int)(0.2*n)]
 
@@ -543,7 +551,7 @@ if __name__ == "__main__":
    list2=y[(int)(0.4*n):]
    train5Y=np.append(list1,list2)
    test5Y=y[(int)(0.2*n):(int)(0.4*n)]
-
+   '''
    original={'kNN':0,'Logistic Regression':0,'Linear SVM':0,'Poly SVM':0,'Random Forest':0,\
    			 'AdaBoost':0,'Neural Network':0,'Decision Tree':0}
    orig_ig={'kNN':0,'Logistic Regression':0,'Linear SVM':0,'Poly SVM':0,'Random Forest':0,\
@@ -563,19 +571,8 @@ if __name__ == "__main__":
    #############################################################################
                 # Computing Accuracy for each fold of Cross Validation
    #############################################################################
-
-   start = time.time()
-   st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
-   print (st)
-   
+   '''
    original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
-   
-   done = time.time()
-   do = datetime.datetime.fromtimestamp(done).strftime('%Y-%m-%d %H:%M:%S')
-   print (do)
-   elapsed = done - start
-   print (elapsed)
-   
    original_ig_train1=pd.read_csv('sonar_original_ig_trainfeatures.csv', header=None)
    original_ig_test1=pd.read_csv('sonar_original_ig_testfeatures.csv',header=None)
 
@@ -585,11 +582,11 @@ if __name__ == "__main__":
    dependent(original_ig_train1, 0.7, 1)
    linear(original_ig_train1, original_ig_test1, 1)
    nonlinear(original_ig_train1, original_ig_test1, 1)
-
-   a1=pd.read_csv('sonar_related_lineartest_1.csv',header=None)          # all predicted feature files
-   a2=pd.read_csv('sonar_related_lineartrain_1.csv',header=None)
-   a3=pd.read_csv('sonar_related_nonlineartest_1.csv',header=None)
-   a4=pd.read_csv('sonar_related_nonlineartrain_1.csv',header=None)
+   '''
+   a1=pd.read_csv(args.inputfolder+'sonar_related_lineartest_1.csv',header=None)          # all predicted feature files
+   a2=pd.read_csv(args.inputfolder+'sonar_related_lineartrain_1.csv',header=None)
+   a3=pd.read_csv(args.inputfolder+'sonar_related_nonlineartest_1.csv',header=None)
+   a4=pd.read_csv(args.inputfolder+'sonar_related_nonlineartrain_1.csv',header=None)
 
    #r4=a4
    #r3=a3
@@ -599,15 +596,16 @@ if __name__ == "__main__":
    scaler=StandardScaler().fit(r4) # Normalization  & fit only on training
    p2=scaler.transform(r4)     # Normalized Train
    p1=scaler.transform(r3)     # Normalized Test
-
+   '''
    stable(p2,p1,train1Y)
-   f1=pd.read_csv('sonar_ensemble_trainfeatures.csv',header=None)
-   f2=pd.read_csv('sonar_ensemble_testfeatures.csv',header=None)
+   
+   f1=pd.read_csv(args.inputfolder+'sonar_ensemble_trainfeatures.csv',header=None)
+   f2=pd.read_csv(args.inputfolder+'sonar_ensemble_testfeatures.csv',header=None)
 
    scaler=StandardScaler().fit(f1)
    e_f1=scaler.transform(f1)
    e_f2=scaler.transform(f2)
-
+   
    x1X=np.hstack([test1, f2])  # original test features, selected by IG, f2 is feature space after ensemble selection.
    x2X=np.hstack([train1, f1])
 
@@ -631,7 +629,7 @@ if __name__ == "__main__":
    scaler=StandardScaler().fit(st_x2X)  # Again normalization of the complete combined feature pool
    st_x2=scaler.transform(st_x2X)          # note - when features need to be merged with R2R, we need to do normalization.
    st_x1=scaler.transform(st_x1X)
-
+   '''
    print("............................................................................................................................")
 
    print("Predicting Accuracies")
@@ -640,10 +638,12 @@ if __name__ == "__main__":
    st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
    print (st)
 
-   names=['kNN','Logistic Regression','Linear SVM','Poly SVM','Random Forest','AdaBoost','Neural Network','Decision Tree']
-   models=[KNeighborsClassifier(), LogisticRegression(), svm.LinearSVC(),SVC(C=1.0, kernel='poly'),
-           RandomForestClassifier(),AdaBoostClassifier(), MLPClassifier(), tree.DecisionTreeClassifier()]
-
+   # names=['kNN','Logistic Regression','Linear SVM','Poly SVM','Random Forest','AdaBoost','Neural Network','Decision Tree']
+   # models=[KNeighborsClassifier(), LogisticRegression(), svm.LinearSVC(),SVC(C=1.0, kernel='poly'),
+   #         RandomForestClassifier(),AdaBoostClassifier(), MLPClassifier(), tree.DecisionTreeClassifier()]
+   names=['AdaBoost']
+   models=[AdaBoostClassifier(n_estimators=300)]
+   '''
    print("....................Results on Original Features...............................")
 
    for i in range(0,len(models)):
@@ -659,7 +659,7 @@ if __name__ == "__main__":
       y_out= models[i].predict(original_ig_test1)
       print(models[i].score(original_ig_test1,test1Y)," ..... ",names[i])
       orig_ig[names[i]]+=models[i].score(original_ig_test1, test1Y)
-
+   '''
    print("...................Results on Newly constructed Features.........................")
 
    for i in range(0,len(models)):
@@ -667,15 +667,16 @@ if __name__ == "__main__":
       y_out= models[i].predict(p1)
       print(models[i].score(p1,test1Y)," ..... ",names[i])
       new[names[i]]+=models[i].score(p1,test1Y)
-
+   '''
    print("...................Results after R2R.........................")
-
+   
    for i in range(0,len(models)):
       models[i].fit(e_f1,train1Y)
       y_out= models[i].predict(e_f2)
       print(models[i].score(e_f2,test1Y)," ..... ",names[i])
+      np.savetxt(args.outputfolder + '/final_results.txt', np.full((1), models[i].score(e_f2,test1Y)), delimiter=",")
       new_fs[names[i]]+=models[i].score(e_f2,test1Y)
-
+  
    print("...................Results on (5).............................")
 
    for i in range(0,len(models)):
@@ -701,13 +702,13 @@ if __name__ == "__main__":
       stable_ig[names[i]]+=models[i].score(st_x1,test1Y)
 
    rank(x2,train1Y) # - rank function is for plotting graph - sec 5 in paper
-   
+   ''' 
    done = time.time()
    do = datetime.datetime.fromtimestamp(done).strftime('%Y-%m-%d %H:%M:%S')
    print (do)
    elapsed = done - start
    print (elapsed)
-
+   '''
    print("################################################################################")
    print("################################################################################")
 
@@ -1184,6 +1185,7 @@ if __name__ == "__main__":
    #rank(Train1,y_train)
    #rank(Train,y_train)
    '''
+   '''
    print("Original features", pp)
    print("Selected after IG (Avg)", len_orig_ig/5)
    print("---------------------------------------------")
@@ -1192,7 +1194,7 @@ if __name__ == "__main__":
    print("---------------------------------------------")
    print("Features selected after ensemble (Avg)", ensemble_val/5)
    '''
-   
+   '''
    print("Accuracies :")
 
    print("................... Average of results after 5 fold CV in the same order as above .............................")
@@ -1208,5 +1210,5 @@ if __name__ == "__main__":
        print((supplement_ig[names[i]]/5)*100)
        print((stable_ig[names[i]]/5)*100)
        print("--------------------------")
-
-   print("DONE !!!")
+   '''
+   print("model DONE !!!")

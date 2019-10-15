@@ -34,6 +34,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.feature_selection import mutual_info_classif
 import datetime
 import time
+import argparse
 
 __author__ = "Saket Maheshwary, Ambika Kaul"
 __credits__ = ["Saket Maheshwary", "Ambika Kaul"]
@@ -442,7 +443,7 @@ def stable(ress,test,labels):   # ress is training data
 #############################################################################
 
 
-def original_ig(ress,test,labels):   # ress is training data
+def original_ig(output_folder, ress,test,labels):   # ress is training data
     x,y = ress.shape
     names = np.arange(y)
 
@@ -471,23 +472,27 @@ def original_ig(ress,test,labels):   # ress is training data
     dataset3=test[:,finale]
     #dataset3=test.iloc[:,finale]
 
-    if os.path.exists("sonar_original_ig_testfeatures.csv"):                           # Name of Ouput file generated
-       os.remove("sonar_original_ig_testfeatures.csv")
-    if os.path.exists("sonar_original_ig_trainfeatures.csv"):                          # Name of Ouput file generated
-       os.remove("sonar_original_ig_trainfeatures.csv")
+    if os.path.exists(output_folder+"sonar_original_ig_testfeatures.csv"):                           # Name of Ouput file generated
+       os.remove(output_folder+"sonar_original_ig_testfeatures.csv")
+    if os.path.exists(output_folder+"sonar_original_ig_trainfeatures.csv"):                          # Name of Ouput file generated
+       os.remove(output_folder+"sonar_original_ig_trainfeatures.csv")
 
-    with open("sonar_original_ig_testfeatures.csv", "wb") as myfile:
+    with open(output_folder+"sonar_original_ig_testfeatures.csv", "wb") as myfile:
             np.savetxt(myfile,dataset3,delimiter=",",fmt="%s")
-    with open("sonar_original_ig_trainfeatures.csv", "wb") as myfile:
+    with open(output_folder+"sonar_original_ig_trainfeatures.csv", "wb") as myfile:
             np.savetxt(myfile,dataset1,delimiter=",",fmt="%s")
 
 ###############################################################################################################################################
                                                            # Main Function
 ###############################################################################################################################################
 
+if __name__ == '__main__':
+   parser = argparse.ArgumentParser(description='Autolearn IG')
+   parser.add_argument('-inputfolder', type=str, help='input data directory')
+   parser.add_argument('-outputfolder', type=str, help='output data directory')
+   args = parser.parse_args()
 
-if __name__ == "__main__":
-   df=pd.read_csv('sonar.csv',header=None)    # Name of the input numeric feature file in .csv format
+   df=pd.read_csv(args.inputfolder+'sonar.csv',header=None)    # Name of the input numeric feature file in .csv format
    shuffle(df)
    data=df.sample(frac=1)
    n,m=data.shape
@@ -564,18 +569,8 @@ if __name__ == "__main__":
                 # Computing Accuracy for each fold of Cross Validation
    #############################################################################
 
-   start = time.time()
-   st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
-   print (st)
-   
-   original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
-   
-   done = time.time()
-   do = datetime.datetime.fromtimestamp(done).strftime('%Y-%m-%d %H:%M:%S')
-   print (do)
-   elapsed = done - start
-   print (elapsed)
-   
+   original_ig(args.outputfolder, train1,test1,train1Y)  # No normalization needed for original training & testing
+   '''
    original_ig_train1=pd.read_csv('sonar_original_ig_trainfeatures.csv', header=None)
    original_ig_test1=pd.read_csv('sonar_original_ig_testfeatures.csv',header=None)
 
@@ -1184,6 +1179,7 @@ if __name__ == "__main__":
    #rank(Train1,y_train)
    #rank(Train,y_train)
    '''
+   '''
    print("Original features", pp)
    print("Selected after IG (Avg)", len_orig_ig/5)
    print("---------------------------------------------")
@@ -1192,7 +1188,7 @@ if __name__ == "__main__":
    print("---------------------------------------------")
    print("Features selected after ensemble (Avg)", ensemble_val/5)
    '''
-   
+   '''
    print("Accuracies :")
 
    print("................... Average of results after 5 fold CV in the same order as above .............................")
@@ -1208,5 +1204,5 @@ if __name__ == "__main__":
        print((supplement_ig[names[i]]/5)*100)
        print((stable_ig[names[i]]/5)*100)
        print("--------------------------")
-
-   print("DONE !!!")
+   '''
+   print("original_ig DONE !!!")

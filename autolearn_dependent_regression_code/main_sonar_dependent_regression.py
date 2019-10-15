@@ -34,6 +34,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.feature_selection import mutual_info_classif
 import datetime
 import time
+import argparse
 
 __author__ = "Saket Maheshwary, Ambika Kaul"
 __credits__ = ["Saket Maheshwary", "Ambika Kaul"]
@@ -58,6 +59,7 @@ np.random.seed(7)  # to ensure that everytime results are same
 
 def shuffle(df, n=1, axis=0):
     df = df.copy()
+    np.random.seed(10)
     for _ in range(n):
       df.apply(np.random.shuffle, axis=axis)
     return df
@@ -105,7 +107,7 @@ def distcorr(X, Y):
 ###########################################################################
 
 
-def dependent(x,th1,fold):
+def dependent(outputfolder, x,th1,fold):
     start = time.time()
     st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
     print (st)
@@ -130,13 +132,13 @@ def dependent(x,th1,fold):
                cnt1=cnt1+1
 
        #print(i)
-    if os.path.exists('sonar_linear_correlated_{}.csv'.format(fold)):                             # Name of Ouput file generated
-       os.remove('sonar_linear_correlated_{}.csv'.format(fold))
-    if os.path.exists('sonar_nonlinear_correlated_{}.csv'.format(fold)):                          # Name of Ouput file generated
-       os.remove('sonar_nonlinear_correlated_{}.csv'.format(fold))
+    if os.path.exists(outputfolder+'sonar_linear_correlated_{}.csv'.format(fold)):                             # Name of Ouput file generated
+       os.remove(outputfolder+'sonar_linear_correlated_{}.csv'.format(fold))
+    if os.path.exists(outputfolder+'sonar_nonlinear_correlated_{}.csv'.format(fold)):                          # Name of Ouput file generated
+       os.remove(outputfolder+'sonar_nonlinear_correlated_{}.csv'.format(fold))
 
-    np.savetxt("sonar_linear_correlated_{}.csv".format(fold),ans,delimiter=",",fmt="%.5f")
-    np.savetxt("sonar_nonlinear_correlated_{}.csv".format(fold),ans1,delimiter=",",fmt="%s")
+    np.savetxt(outputfolder+"sonar_linear_correlated_{}.csv".format(fold),ans,delimiter=",",fmt="%.5f")
+    np.savetxt(outputfolder+"sonar_nonlinear_correlated_{}.csv".format(fold),ans1,delimiter=",",fmt="%s")
 
     print("This is fold no - {}".format(fold))
     print("Number of linear correlated features are:")
@@ -194,14 +196,14 @@ def rank(X1,y):
 ###########################################################################
 
 
-def linear(TR,TST,fold):
+def linear(outputfolder, TR,TST,fold):
     start = time.time()
     st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
     print (st)
 
     a,b=TR.shape
     c,d=TST.shape
-    dataset=pd.read_csv('sonar_linear_correlated_{}.csv'.format(fold),header=None)
+    dataset=pd.read_csv(outputfolder+'sonar_linear_correlated_{}.csv'.format(fold),header=None)
     val=dataset.as_matrix(columns=None)
     aa,bb=val.shape
 
@@ -235,15 +237,15 @@ def linear(TR,TST,fold):
     predicted_test_final=np.hstack([predicted_test,predicted_test_error])
     # Saving constructed features finally to a file
 
-    if os.path.exists("sonar_related_lineartest_{}.csv".format(fold)):                          # Name of Ouput file generated
-       os.remove("sonar_related_lineartest_{}.csv".format(fold))
+    if os.path.exists(outputfolder+"sonar_related_lineartest_{}.csv".format(fold)):                          # Name of Ouput file generated
+       os.remove(outputfolder+"sonar_related_lineartest_{}.csv".format(fold))
 
-    if os.path.exists('sonar_related_lineartrain_{}.csv'.format(fold)):                          # Name of Ouput file generated
-       os.remove('sonar_related_lineartrain_{}.csv'.format(fold))
+    if os.path.exists(outputfolder+'sonar_related_lineartrain_{}.csv'.format(fold)):                          # Name of Ouput file generated
+       os.remove(outputfolder+'sonar_related_lineartrain_{}.csv'.format(fold))
 
-    with open("sonar_related_lineartest_{}.csv".format(fold), "wb") as myfile:
+    with open(outputfolder+"sonar_related_lineartest_{}.csv".format(fold), "wb") as myfile:
             np.savetxt(myfile,predicted_test_final,delimiter=",",fmt="%s")
-    with open("sonar_related_lineartrain_{}.csv".format(fold), "wb") as myfile:
+    with open(outputfolder+"sonar_related_lineartrain_{}.csv".format(fold), "wb") as myfile:
             np.savetxt(myfile,predicted_train_final,delimiter=",",fmt="%s")
     done = time.time()
     do = datetime.datetime.fromtimestamp(done).strftime('%Y-%m-%d %H:%M:%S')
@@ -257,14 +259,14 @@ def linear(TR,TST,fold):
 ###########################################################################
 
 
-def nonlinear(TR,TST,fold):
+def nonlinear(outputfolder,TR,TST,fold):
     start = time.time()
     st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
     print (st)
 
     a,b=TR.shape
     c,d=TST.shape
-    dataset=pd.read_csv('sonar_nonlinear_correlated_{}.csv'.format(fold),header=None)
+    dataset=pd.read_csv(outputfolder+'sonar_nonlinear_correlated_{}.csv'.format(fold),header=None)
     val=dataset.as_matrix(columns=None)
     aa,bb=val.shape
 
@@ -309,16 +311,16 @@ def nonlinear(TR,TST,fold):
     predicted_train_final=np.hstack([predicted_train,predicted_train_error])
     predicted_test_final=np.hstack([predicted_test,predicted_test_error])
 
-    if os.path.exists("sonar_related_nonlineartest_{}.csv".format(fold)):                          # Name of Ouput file generated
-       os.remove("sonar_related_nonlineartest_{}.csv".format(fold))
+    if os.path.exists(outputfolder+"sonar_related_nonlineartest_{}.csv".format(fold)):                          # Name of Ouput file generated
+       os.remove(outputfolder+"sonar_related_nonlineartest_{}.csv".format(fold))
 
-    if os.path.exists('sonar_related_nonlineartrain_{}.csv'.format(fold)):                          # Name of Ouput file generated
-       os.remove('sonar_related_nonlineartrain_{}.csv'.format(fold))
+    if os.path.exists(outputfolder+'sonar_related_nonlineartrain_{}.csv'.format(fold)):                          # Name of Ouput file generated
+       os.remove(outputfolder+'sonar_related_nonlineartrain_{}.csv'.format(fold))
 
     # Saving constructed features finally to a file
-    with open("sonar_related_nonlineartest_{}.csv".format(fold), "wb") as myfile:
+    with open(outputfolder+"sonar_related_nonlineartest_{}.csv".format(fold), "wb") as myfile:
             np.savetxt(myfile,predicted_test_final,delimiter=",")
-    with open("sonar_related_nonlineartrain_{}.csv".format(fold), "wb") as myfile:
+    with open(outputfolder+"sonar_related_nonlineartrain_{}.csv".format(fold), "wb") as myfile:
             np.savetxt(myfile,predicted_train_final,delimiter=",")
 
     done = time.time()
@@ -485,8 +487,13 @@ def original_ig(ress,test,labels):   # ress is training data
                                                            # Main Function
 ###############################################################################################################################################
 
+if __name__ == '__main__':
+   parser = argparse.ArgumentParser(description='Autolearn IG')
+   parser.add_argument('-inputfolder', type=str, help='input data directory')
+   parser.add_argument('-outputfolder', type=str, help='output data directory')
+   args = parser.parse_args()
 
-if __name__ == "__main__":
+   '''
    df=pd.read_csv('sonar.csv',header=None)    # Name of the input numeric feature file in .csv format
    shuffle(df)
    data=df.sample(frac=1)
@@ -559,33 +566,25 @@ if __name__ == "__main__":
    stable_ig={'kNN':0,'Logistic Regression':0,'Linear SVM':0,'Poly SVM':0,'Random Forest':0,\
                   'AdaBoost':0,'Neural Network':0,'Decision Tree':0}
 
-
+   '''
    #############################################################################
                 # Computing Accuracy for each fold of Cross Validation
    #############################################################################
 
-   start = time.time()
-   st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
-   print (st)
-   
-   original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
-   
-   done = time.time()
-   do = datetime.datetime.fromtimestamp(done).strftime('%Y-%m-%d %H:%M:%S')
-   print (do)
-   elapsed = done - start
-   print (elapsed)
-   
-   original_ig_train1=pd.read_csv('sonar_original_ig_trainfeatures.csv', header=None)
-   original_ig_test1=pd.read_csv('sonar_original_ig_testfeatures.csv',header=None)
+   # original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
+   original_ig_train1=pd.read_csv(args.inputfolder+'sonar_original_ig_trainfeatures.csv', header=None)
+   original_ig_test1=pd.read_csv(args.inputfolder+'sonar_original_ig_testfeatures.csv',header=None)
 
    original_ig_train1=original_ig_train1.as_matrix()
    original_ig_test1=original_ig_test1.as_matrix()
 
-   dependent(original_ig_train1, 0.7, 1)
-   linear(original_ig_train1, original_ig_test1, 1)
-   nonlinear(original_ig_train1, original_ig_test1, 1)
+   dependent(args.outputfolder, original_ig_train1, 0.7, 1)
 
+   
+   linear(args.outputfolder, original_ig_train1, original_ig_test1, 1)
+   nonlinear(args.outputfolder, original_ig_train1, original_ig_test1, 1)
+   
+   '''
    a1=pd.read_csv('sonar_related_lineartest_1.csv',header=None)          # all predicted feature files
    a2=pd.read_csv('sonar_related_lineartrain_1.csv',header=None)
    a3=pd.read_csv('sonar_related_nonlineartest_1.csv',header=None)
@@ -1184,6 +1183,7 @@ if __name__ == "__main__":
    #rank(Train1,y_train)
    #rank(Train,y_train)
    '''
+   '''
    print("Original features", pp)
    print("Selected after IG (Avg)", len_orig_ig/5)
    print("---------------------------------------------")
@@ -1192,7 +1192,7 @@ if __name__ == "__main__":
    print("---------------------------------------------")
    print("Features selected after ensemble (Avg)", ensemble_val/5)
    '''
-   
+   '''
    print("Accuracies :")
 
    print("................... Average of results after 5 fold CV in the same order as above .............................")
@@ -1208,5 +1208,5 @@ if __name__ == "__main__":
        print((supplement_ig[names[i]]/5)*100)
        print((stable_ig[names[i]]/5)*100)
        print("--------------------------")
-
-   print("DONE !!!")
+   '''
+   print("dependent and regression DONE !!!")

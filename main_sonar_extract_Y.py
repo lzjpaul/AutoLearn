@@ -525,7 +525,11 @@ if __name__ == "__main__":
 
    train1Y=y[:(int)(0.8*n)]
    test1Y=y[(int)(0.8*n):]
-
+   print ('train1Y: ', train1Y)
+   print ('test1Y: ', test1Y)
+   np.savetxt('train1Y_matrix.csv', train1Y, fmt='%d')
+   np.savetxt('test1Y_matrix.csv', test1Y, fmt='%d')
+   '''
    train2Y=y[(int)(0.2*n):]
    test2Y=y[:(int)(0.2*n)]
 
@@ -564,18 +568,7 @@ if __name__ == "__main__":
                 # Computing Accuracy for each fold of Cross Validation
    #############################################################################
 
-   start = time.time()
-   st = datetime.datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
-   print (st)
-   
    original_ig(train1,test1,train1Y)  # No normalization needed for original training & testing
-   
-   done = time.time()
-   do = datetime.datetime.fromtimestamp(done).strftime('%Y-%m-%d %H:%M:%S')
-   print (do)
-   elapsed = done - start
-   print (elapsed)
-   
    original_ig_train1=pd.read_csv('sonar_original_ig_trainfeatures.csv', header=None)
    original_ig_test1=pd.read_csv('sonar_original_ig_testfeatures.csv',header=None)
 
@@ -1184,6 +1177,7 @@ if __name__ == "__main__":
    #rank(Train1,y_train)
    #rank(Train,y_train)
    '''
+   '''
    print("Original features", pp)
    print("Selected after IG (Avg)", len_orig_ig/5)
    print("---------------------------------------------")
@@ -1192,7 +1186,7 @@ if __name__ == "__main__":
    print("---------------------------------------------")
    print("Features selected after ensemble (Avg)", ensemble_val/5)
    '''
-   
+   '''
    print("Accuracies :")
 
    print("................... Average of results after 5 fold CV in the same order as above .............................")
@@ -1208,5 +1202,5 @@ if __name__ == "__main__":
        print((supplement_ig[names[i]]/5)*100)
        print((stable_ig[names[i]]/5)*100)
        print("--------------------------")
-
-   print("DONE !!!")
+   '''
+   print("extract Y DONE !!!")
