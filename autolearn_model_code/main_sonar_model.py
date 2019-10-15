@@ -666,6 +666,7 @@ if __name__ == '__main__':
       models[i].fit(p2,train1Y)
       y_out= models[i].predict(p1)
       print(models[i].score(p1,test1Y)," ..... ",names[i])
+      np.savetxt(args.outputfolder + '/final_results.txt', np.full((1), models[i].score(p1,test1Y)), delimiter=",")
       new[names[i]]+=models[i].score(p1,test1Y)
    '''
    print("...................Results after R2R.........................")
